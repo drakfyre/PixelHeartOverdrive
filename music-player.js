@@ -149,7 +149,10 @@ function updateSong()
         songSlider.max = audio.duration;
     };
 
-    audio.play();
+    if(!audio.paused)
+    {
+        audio.play();
+    }
 }
 
 songSlider.addEventListener("change", function() {
