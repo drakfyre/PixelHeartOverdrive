@@ -218,7 +218,7 @@ function playPreviousTrack()
 async function playAudio() {
   try {
     playpauseButton.classList.replace('fa-circle-play', 'fa-circle-pause');
-    await audio.play();
+    audio.play();
     if ('mediaSession' in navigator) {
       navigator.mediaSession.playbackState = "playing";
     }
