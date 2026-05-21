@@ -118,6 +118,22 @@ audio.addEventListener('ended', () => {
     playNextTrack(); // Your function to change src and play
 });
 
+audio.addEventListener('stalled', () => {
+  console.warn('Network connection is stalled. Buffering...');
+  // Optional: show a "Buffering" indicator in your UI
+});
+
+audio.addEventListener('error', (e) => {
+  console.error('Audio playback error:', audio.error);
+  // Attempt a soft reconnect by reloading the source
+  const currentSource = audio.src;
+  setTimeout(() => {
+    audio.src = currentSource;
+    audio.currentTime = songSlider.value;
+    audio.play().catch(err => console.log('Reconnection failed', err));
+  }, 3000); // Wait 3 seconds before retrying
+});
+
 playpauseButton.addEventListener("click", function() {
     if (!audio.paused)
     {
@@ -135,21 +151,33 @@ function updateSong()
 {
     const song = songs[currentSongIndex];
 
-    if ('mediaSession' in navigator) {
-    navigator.mediaSession.metadata = new MediaMetadata({
-        title: song.name,
-        artist: song.artist,
-        album: 'Pixel Heart Overdrive',
-        artwork: [{ src: 'albumart.jpeg', sizes: '512x512', type: 'image/jpeg' }]
-    });
+    if('mediaSession' in navigator)
+    {
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: song.name,
+            artist: song.artist,
+            album: 'Pixel Heart Overdrive',
+            artwork: [{ src: 'albumart.jpeg', sizes: '512x512', type: 'image/jpeg' }]
+        });
 
-    navigator.mediaSession.setActionHandler('nexttrack', () => {
-        playNextTrack();
-    });
+        navigator.mediaSession.setActionHandler('nexttrack', () => {
+            playNextTrack();
+        });
 
-    navigator.mediaSession.setActionHandler('previoustrack', () => {
-        playPreviousTrack();
-    });
+        navigator.mediaSession.setActionHandler('previoustrack', () => {
+            playPreviousTrack();
+        });
+
+        navigator.mediaSession.setActionHandler('play', () =>
+        {
+            audio.play();
+            playpauseButton.classList.replace('fa-circle-play', 'fa-circle-pause');
+        });
+        navigator.mediaSession.setActionHandler('pause', () =>
+        {
+            audio.pause();
+            playpauseButton.classList.replace('fa-circle-pause', 'fa-circle-play');
+        });
     }
 
     //songImage.src = song.image;
