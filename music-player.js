@@ -8,6 +8,11 @@ const playpauseButton = document.getElementById("playpause-song");
 const prevSongButton = document.getElementById("prev-song");
 const nextSongButton = document.getElementById("next-song");
 
+// IMPORTANT:
+// Add this to your HTML:
+// <audio id="audio-player"></audio>
+const audioPlayer = document.getElementById("audio-player");
+
 const songs = [
     {
         name: "Example of the Hero",
@@ -102,26 +107,42 @@ const songs = [
 ];
 
 // --------------------------------------------------
-// MUSIC PLAYER
+// PLAYER STATE
 // --------------------------------------------------
 
 let currentSongIndex = 0;
 let isPlaying = false;
 
-const audioPlayer = new Audio();
+// --------------------------------------------------
+// MOBILE PLAYBACK IMPROVEMENTS
+// --------------------------------------------------
 
-// Optional placeholder image if you don't have album art
-const defaultCover = "albumart.jpeg";
+audioPlayer.preload = "auto";
+audioPlayer.crossOrigin = "anonymous";
+
+// iOS Safari
+audioPlayer.setAttribute("playsinline", "true");
+audioPlayer.setAttribute("webkit-playsinline", "true");
+
+// --------------------------------------------------
+// OPTIONAL DEFAULT COVER
+// --------------------------------------------------
+
+const defaultCover = "images/default-cover.png";
+
+// --------------------------------------------------
+// LOAD SONG
+// --------------------------------------------------
 
 function loadSong(index) {
     const song = songs[index];
 
     audioPlayer.src = song.audio;
+    audioPlayer.load();
 
     songName.textContent = song.name;
     songArtist.textContent = song.artist;
 
-    // If you add image fields later this will work automatically
     if (song.image) {
         songImage.src = song.image;
     } else {
@@ -131,17 +152,28 @@ function loadSong(index) {
     updateMediaSession();
 }
 
-function playSong() {
-    audioPlayer.play();
+// --------------------------------------------------
+// PLAY SONG
+// --------------------------------------------------
 
-    isPlaying = true;
+async function playSong() {
+    try {
+        await audioPlayer.play();
 
-    playpauseButton.classList.replace("fa-circle-play","fa-circle-pause");
+        isPlaying = true;
+        playpauseButton.classList.replace("fa-circle-play","fa-circle-pause");
 
-    if ("mediaSession" in navigator) {
-        navigator.mediaSession.playbackState = "playing";
+        if ("mediaSession" in navigator) {
+            navigator.mediaSession.playbackState = "playing";
+        }
+    } catch (err) {
+        console.warn("Playback failed:", err);
     }
 }
+
+// --------------------------------------------------
+// PAUSE SONG
+// --------------------------------------------------
 
 function pauseSong() {
     audioPlayer.pause();
@@ -155,6 +187,10 @@ function pauseSong() {
     }
 }
 
+// --------------------------------------------------
+// TOGGLE PLAY/PAUSE
+// --------------------------------------------------
+
 function togglePlayPause() {
     if (isPlaying) {
         pauseSong();
@@ -162,6 +198,10 @@ function togglePlayPause() {
         playSong();
     }
 }
+
+// --------------------------------------------------
+// NEXT SONG
+// --------------------------------------------------
 
 function nextSong() {
     currentSongIndex++;
@@ -171,8 +211,20 @@ function nextSong() {
     }
 
     loadSong(currentSongIndex);
-    playSong();
+
+    // Wait until enough audio is buffered
+    audioPlayer.addEventListener(
+        "canplaythrough",
+        () => {
+            playSong();
+        },
+        { once: true }
+    );
 }
+
+// --------------------------------------------------
+// PREVIOUS SONG
+// --------------------------------------------------
 
 function prevSong() {
     currentSongIndex--;
@@ -182,11 +234,18 @@ function prevSong() {
     }
 
     loadSong(currentSongIndex);
-    playSong();
+
+    audioPlayer.addEventListener(
+        "canplaythrough",
+        () => {
+            playSong();
+        },
+        { once: true }
+    );
 }
 
 // --------------------------------------------------
-// SONG SLIDER
+// SONG SLIDER UPDATE
 // --------------------------------------------------
 
 audioPlayer.addEventListener("timeupdate", () => {
@@ -196,6 +255,10 @@ audioPlayer.addEventListener("timeupdate", () => {
     }
 });
 
+// --------------------------------------------------
+// SEEK BAR
+// --------------------------------------------------
+
 songSlider.addEventListener("input", () => {
     if (audioPlayer.duration) {
         audioPlayer.currentTime =
@@ -204,11 +267,26 @@ songSlider.addEventListener("input", () => {
 });
 
 // --------------------------------------------------
-// AUTO NEXT TRACK
+// TRACK FINISHED
 // --------------------------------------------------
 
-audioPlayer.addEventListener("ended", () => {
-    nextSong();
+audioPlayer.addEventListener("ended", handleSongEnded);
+
+function handleSongEnded() {
+    // Small delay helps mobile browsers
+    setTimeout(() => {
+        nextSong();
+    }, 100);
+}
+
+// --------------------------------------------------
+// VISIBILITY RECOVERY
+// --------------------------------------------------
+
+document.addEventListener("visibilitychange", () => {
+    if (!document.hidden && isPlaying && audioPlayer.paused) {
+        audioPlayer.play().catch(() => {});
+    }
 });
 
 // --------------------------------------------------
@@ -233,7 +311,7 @@ function updateMediaSession() {
     navigator.mediaSession.metadata = new MediaMetadata({
         title: song.name,
         artist: song.artist,
-        album: "Pixel Heart Overdrve",
+        album: "HappyJazzyDragon Collection",
         artwork: [
             {
                 src: song.image || defaultCover,
@@ -261,7 +339,7 @@ function updateMediaSession() {
 }
 
 // --------------------------------------------------
-// INITIALIZE
+// INITIALIZE PLAYER
 // --------------------------------------------------
 
 loadSong(currentSongIndex);
