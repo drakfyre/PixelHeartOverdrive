@@ -142,6 +142,8 @@ function updateSong()
     songName.innerText = song.name;
     songArtist.innerText = song.artist;
 
+    const paused = audio.paused;
+
     audio.src = song.audio;
     audio.onloadedmetadata = function()
     {
@@ -149,7 +151,7 @@ function updateSong()
         songSlider.max = audio.duration;
     };
 
-    if(!audio.paused)
+    if(!paused)
     {
         audio.play();
     }
