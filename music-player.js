@@ -233,7 +233,7 @@ function updateMediaSession() {
     navigator.mediaSession.metadata = new MediaMetadata({
         title: song.name,
         artist: song.artist,
-        album: "HappyJazzyDragon Collection",
+        album: "Pixel Heart Overdrve",
         artwork: [
             {
                 src: song.image || defaultCover,
