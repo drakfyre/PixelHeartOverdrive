@@ -101,145 +101,75 @@ const songs = [
     },
 ];
 
-const audio = document.createElement("audio");
-let currentSongIndex = 0;
+let currentIndex = 0;
+const audio = new Audio();
 
-updateSong();
-
-prevSongButton.addEventListener("click", function() {
-    playPreviousTrack();
-});
-
-nextSongButton.addEventListener("click", function() {
-    playNextTrack();
-});
-
-audio.addEventListener('ended', () => {
-    playNextTrack(); // Your function to change src and play
-});
-
-audio.addEventListener('stalled', () => {
-  console.warn('Network connection is stalled. Buffering...');
-  // Optional: show a "Buffering" indicator in your UI
-});
-
-audio.addEventListener('error', (e) => {
-  console.error('Audio playback error:', audio.error);
-  // Attempt a soft reconnect by reloading the source
-  const currentSource = audio.src;
-  setTimeout(() => {
-    audio.src = currentSource;
-    audio.currentTime = songSlider.value;
-    audio.play().catch(err => console.log('Reconnection failed', err));
-  }, 3000); // Wait 3 seconds before retrying
-});
-
-playpauseButton.addEventListener("click", function() {
-    if (!audio.paused)
-    {
-        pauseAudio();
-    }
-    else
-    {
-        playAudio();
-    }
-});
-
-function updateSong()
-{
-    const song = songs[currentSongIndex];
-
-    if('mediaSession' in navigator)
-    {
-        navigator.mediaSession.metadata = new MediaMetadata({
-            title: song.name,
-            artist: song.artist,
-            album: 'Pixel Heart Overdrive',
-            artwork: [{ src: 'albumart.jpeg', sizes: '512x512', type: 'image/jpeg' }]
-        });
-
-        navigator.mediaSession.setActionHandler('nexttrack', () => {
-            playNextTrack();
-        });
-
-        navigator.mediaSession.setActionHandler('previoustrack', () => {
-            playPreviousTrack();
-        });
-
-        navigator.mediaSession.setActionHandler('play', () =>
-        {
-            playAudio();
-        });
-        navigator.mediaSession.setActionHandler('pause', () =>
-        {
-            pauseAudio();
-        });
-    }
-
-    //songImage.src = song.image;
-    songName.innerText = song.name;
-    songArtist.innerText = song.artist;
-
-    audio.src = song.audio;
-    audio.onloadedmetadata = function()
-    {
-        songSlider.value = 0;
-        songSlider.max = audio.duration;
-    };
-
-    if(playpauseButton.classList.contains('fa-circle-pause'))
-    {
-        playAudio();
-    }
+// 2. Initialize Track Player
+function loadTrack(index) {
+  if (index < 0 || index >= playlist.length) return;
+  currentIndex = index;
+  const track = songs[currentIndex];
+  
+  audio.src = track.audio;
+  updateMediaSession(track);
 }
 
-songSlider.addEventListener("change", function() {
-    audio.currentTime = songSlider.value;
-})
-
-function playNextTrack()
-{
-    if (currentSongIndex == songs.length - 1) {
-        return;
-    }
-    currentSongIndex++;
-    updateSong();
-}
-
-function playPreviousTrack()
-{
-    if (currentSongIndex == 0) {
-        return;
-    }
-    currentSongIndex--;
-    updateSong();
-}
-
-async function playAudio() {
-  try {
-    playpauseButton.classList.replace('fa-circle-play', 'fa-circle-pause');
-    audio.play();
-    if ('mediaSession' in navigator) {
-      navigator.mediaSession.playbackState = "playing";
-    }
-  } catch (err) {
-    console.error("Playback prevented:", err);
-  }
-}
-
-function pauseAudio() {
-    playpauseButton.classList.replace('fa-circle-pause', 'fa-circle-play');
-  audio.pause();
+// 3. Sync Browser/OS UI (MediaSession API)
+function updateMediaSession(track) {
   if ('mediaSession' in navigator) {
-    navigator.mediaSession.playbackState = "paused";
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: track.name,
+      artist: track.artist,
+      album: "Pixel Heart Overdrive",
+      artwork: [{ src: "albumart.jpeg", sizes: '512x512', type: 'image/jpeg' }]
+    });
+    setupHardwareControls();
   }
 }
 
-function moveSlider() {
-    songSlider.value = audio.currentTime;
-};
+// 4. Map Hardware Keys & Headphone Buttons
+function setupHardwareControls() {
+  const ms = navigator.mediaSession;
+  
+  ms.setActionHandler('play', () => togglePlay(true));
+  ms.setActionHandler('pause', () => togglePlay(false));
+  ms.setActionHandler('previoustrack', () => playPrevious());
+  ms.setActionHandler('nexttrack', () => playNext());
+}
 
-setInterval(moveSlider, 1000);
+// 5. Playback Control Logic
+function togglePlay(forcePlay) {
+  const shouldPlay = forcePlay !== undefined ? forcePlay : audio.paused;
+  
+  if (shouldPlay) {
+    audio.play().catch(err => console.log("Playback blocked. Await user interaction.", err));
+    if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "playing";
+  } else {
+    audio.pause();
+    if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "paused";
+  }
+}
 
+function playNext() {
+  if (currentIndex < playlist.length - 1) {
+    loadTrack(currentIndex + 1);
+    togglePlay(true);
+  }
+}
 
+function playPrevious() {
+  if (currentIndex > 0) {
+    loadTrack(currentIndex - 1);
+    togglePlay(true);
+  }
+}
 
+// 6. Automation & DOM Event Listeners
+audio.addEventListener('ended', () => playNext());
+
+document.getElementById('playpause-song').addEventListener('click', () => togglePlay());
+document.getElementById('prev-song').addEventListener('click', () => playPrevious());
+document.getElementById('next-song').addEventListener('click', () => playNext());
+
+// Start by loading the first track
+loadTrack(0);
