@@ -114,6 +114,10 @@ nextSongButton.addEventListener("click", function() {
     playNextTrack();
 });
 
+audio.addEventListener('ended', () => {
+    playNextTrack(); // Your function to change src and play
+});
+
 playpauseButton.addEventListener("click", function() {
     if (!audio.paused)
     {
@@ -190,10 +194,6 @@ function playPreviousTrack()
 
 function moveSlider() {
     songSlider.value = audio.currentTime;
-    if(audio.currentTime >= audio.duration)
-    {
-        playNextTrack();
-    }
 };
 
 setInterval(moveSlider, 1000);
