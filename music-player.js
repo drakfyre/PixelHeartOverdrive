@@ -123,11 +123,15 @@ nextSongButton.addEventListener("click", function() {
 });
 
 playpauseButton.addEventListener("click", function() {
-    if (!audio.paused) {
+    if (!audio.paused)
+    {
         audio.pause();
+        playpauseButton.classList.replace('fa-circle-pause', 'fa-circle-play');
     }
-    else {
+    else
+    {
         audio.play();
+        playpauseButton.classList.replace('fa-circle-play', 'fa-circle-pause');
     }
 });
 
