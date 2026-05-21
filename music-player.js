@@ -101,75 +101,167 @@ const songs = [
     },
 ];
 
-let currentIndex = 0;
-const audio = new Audio();
+// --------------------------------------------------
+// MUSIC PLAYER
+// --------------------------------------------------
 
-// 2. Initialize Track Player
-function loadTrack(index) {
-  if (index < 0 || index >= playlist.length) return;
-  currentIndex = index;
-  const track = songs[currentIndex];
-  
-  audio.src = track.audio;
-  updateMediaSession(track);
+let currentSongIndex = 0;
+let isPlaying = false;
+
+const audioPlayer = new Audio();
+
+// Optional placeholder image if you don't have album art
+const defaultCover = "albumart.jpeg";
+
+function loadSong(index) {
+    const song = songs[index];
+
+    audioPlayer.src = song.audio;
+
+    songName.textContent = song.name;
+    songArtist.textContent = song.artist;
+
+    // If you add image fields later this will work automatically
+    if (song.image) {
+        songImage.src = song.image;
+    } else {
+        songImage.src = defaultCover;
+    }
+
+    updateMediaSession();
 }
 
-// 3. Sync Browser/OS UI (MediaSession API)
-function updateMediaSession(track) {
-  if ('mediaSession' in navigator) {
+function playSong() {
+    audioPlayer.play();
+
+    isPlaying = true;
+
+    playpauseButton.textContent = "Pause";
+
+    if ("mediaSession" in navigator) {
+        navigator.mediaSession.playbackState = "playing";
+    }
+}
+
+function pauseSong() {
+    audioPlayer.pause();
+
+    isPlaying = false;
+
+    playpauseButton.textContent = "Play";
+
+    if ("mediaSession" in navigator) {
+        navigator.mediaSession.playbackState = "paused";
+    }
+}
+
+function togglePlayPause() {
+    if (isPlaying) {
+        pauseSong();
+    } else {
+        playSong();
+    }
+}
+
+function nextSong() {
+    currentSongIndex++;
+
+    if (currentSongIndex >= songs.length) {
+        currentSongIndex = 0;
+    }
+
+    loadSong(currentSongIndex);
+    playSong();
+}
+
+function prevSong() {
+    currentSongIndex--;
+
+    if (currentSongIndex < 0) {
+        currentSongIndex = songs.length - 1;
+    }
+
+    loadSong(currentSongIndex);
+    playSong();
+}
+
+// --------------------------------------------------
+// SONG SLIDER
+// --------------------------------------------------
+
+audioPlayer.addEventListener("timeupdate", () => {
+    if (audioPlayer.duration) {
+        songSlider.value =
+            (audioPlayer.currentTime / audioPlayer.duration) * 100;
+    }
+});
+
+songSlider.addEventListener("input", () => {
+    if (audioPlayer.duration) {
+        audioPlayer.currentTime =
+            (songSlider.value / 100) * audioPlayer.duration;
+    }
+});
+
+// --------------------------------------------------
+// AUTO NEXT TRACK
+// --------------------------------------------------
+
+audioPlayer.addEventListener("ended", () => {
+    nextSong();
+});
+
+// --------------------------------------------------
+// BUTTON EVENTS
+// --------------------------------------------------
+
+playpauseButton.addEventListener("click", togglePlayPause);
+nextSongButton.addEventListener("click", nextSong);
+prevSongButton.addEventListener("click", prevSong);
+
+// --------------------------------------------------
+// MEDIA SESSION
+// --------------------------------------------------
+
+function updateMediaSession() {
+    if (!("mediaSession" in navigator)) {
+        return;
+    }
+
+    const song = songs[currentSongIndex];
+
     navigator.mediaSession.metadata = new MediaMetadata({
-      title: track.name,
-      artist: track.artist,
-      album: "Pixel Heart Overdrive",
-      artwork: [{ src: "albumart.jpeg", sizes: '512x512', type: 'image/jpeg' }]
+        title: song.name,
+        artist: song.artist,
+        album: "HappyJazzyDragon Collection",
+        artwork: [
+            {
+                src: song.image || defaultCover,
+                sizes: "512x512",
+                type: "image/png"
+            }
+        ]
     });
-    setupHardwareControls();
-  }
+
+    navigator.mediaSession.setActionHandler("play", () => {
+        playSong();
+    });
+
+    navigator.mediaSession.setActionHandler("pause", () => {
+        pauseSong();
+    });
+
+    navigator.mediaSession.setActionHandler("previoustrack", () => {
+        prevSong();
+    });
+
+    navigator.mediaSession.setActionHandler("nexttrack", () => {
+        nextSong();
+    });
 }
 
-// 4. Map Hardware Keys & Headphone Buttons
-function setupHardwareControls() {
-  const ms = navigator.mediaSession;
-  
-  ms.setActionHandler('play', () => togglePlay(true));
-  ms.setActionHandler('pause', () => togglePlay(false));
-  ms.setActionHandler('previoustrack', () => playPrevious());
-  ms.setActionHandler('nexttrack', () => playNext());
-}
+// --------------------------------------------------
+// INITIALIZE
+// --------------------------------------------------
 
-// 5. Playback Control Logic
-function togglePlay(forcePlay) {
-  const shouldPlay = forcePlay !== undefined ? forcePlay : audio.paused;
-  
-  if (shouldPlay) {
-    audio.play().catch(err => console.log("Playback blocked. Await user interaction.", err));
-    if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "playing";
-  } else {
-    audio.pause();
-    if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "paused";
-  }
-}
-
-function playNext() {
-  if (currentIndex < playlist.length - 1) {
-    loadTrack(currentIndex + 1);
-    togglePlay(true);
-  }
-}
-
-function playPrevious() {
-  if (currentIndex > 0) {
-    loadTrack(currentIndex - 1);
-    togglePlay(true);
-  }
-}
-
-// 6. Automation & DOM Event Listeners
-audio.addEventListener('ended', () => playNext());
-
-document.getElementById('playpause-song').addEventListener('click', () => togglePlay());
-document.getElementById('prev-song').addEventListener('click', () => playPrevious());
-document.getElementById('next-song').addEventListener('click', () => playNext());
-
-// Start by loading the first track
-loadTrack(0);
+loadSong(currentSongIndex);
