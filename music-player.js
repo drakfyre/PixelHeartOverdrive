@@ -136,7 +136,7 @@ function playSong() {
 
     isPlaying = true;
 
-    playpauseButton.textContent = "Pause";
+    playpauseButton.classList.replace("fa-circle-play","fa-circle-pause");
 
     if ("mediaSession" in navigator) {
         navigator.mediaSession.playbackState = "playing";
@@ -148,7 +148,7 @@ function pauseSong() {
 
     isPlaying = false;
 
-    playpauseButton.textContent = "Play";
+    playpauseButton.classList.replace("fa-circle-pause","fa-circle-play");
 
     if ("mediaSession" in navigator) {
         navigator.mediaSession.playbackState = "paused";
