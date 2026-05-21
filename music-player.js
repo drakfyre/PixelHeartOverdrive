@@ -107,19 +107,11 @@ let currentSongIndex = 0;
 updateSong();
 
 prevSongButton.addEventListener("click", function() {
-    if (currentSongIndex == 0) {
-        return;
-    }
-    currentSongIndex--;
-    updateSong();
+    playPreviousTrack();
 });
 
 nextSongButton.addEventListener("click", function() {
-    if (currentSongIndex == songs.length - 1) {
-        return;
-    }
-    currentSongIndex++;
-    updateSong();
+    playNextTrack();
 });
 
 playpauseButton.addEventListener("click", function() {
@@ -138,6 +130,24 @@ playpauseButton.addEventListener("click", function() {
 function updateSong()
 {
     const song = songs[currentSongIndex];
+
+    if ('mediaSession' in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+        title: song.name,
+        artist: song.artist,
+        album: 'Pixel Heart Overdrive',
+        artwork: [{ src: 'albumart.jpeg', sizes: '512x512', type: 'image/jpeg' }]
+    });
+
+    navigator.mediaSession.setActionHandler('nexttrack', () => {
+        playNextTrack();
+    });
+
+    navigator.mediaSession.setActionHandler('previoustrack', () => {
+        playPreviousTrack();
+    });
+    }
+
     //songImage.src = song.image;
     songName.innerText = song.name;
     songArtist.innerText = song.artist;
@@ -159,16 +169,30 @@ songSlider.addEventListener("change", function() {
     audio.currentTime = songSlider.value;
 })
 
+function playNextTrack()
+{
+    if (currentSongIndex == songs.length - 1) {
+        return;
+    }
+    currentSongIndex++;
+    updateSong();
+}
+
+function playPreviousTrack()
+{
+    if (currentSongIndex == 0) {
+        return;
+    }
+    currentSongIndex--;
+    updateSong();
+}
+
+
 function moveSlider() {
     songSlider.value = audio.currentTime;
     if(audio.currentTime >= audio.duration)
     {
-        if (currentSongIndex == songs.length - 1)
-        {
-            return;
-        }
-        currentSongIndex++;
-        updateSong();
+        playNextTrack();
     }
 };
 
