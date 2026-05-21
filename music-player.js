@@ -131,17 +131,21 @@ playpauseButton.addEventListener("click", function() {
     }
 });
 
-function updateSong() {
+function updateSong()
+{
     const song = songs[currentSongIndex];
     //songImage.src = song.image;
     songName.innerText = song.name;
     songArtist.innerText = song.artist;
 
     audio.src = song.audio;
-    audio.onloadedmetadata = function() {
+    audio.onloadedmetadata = function()
+    {
         songSlider.value = 0;
         songSlider.max = audio.duration;
     };
+
+    audio.play
 }
 
 songSlider.addEventListener("change", function() {
