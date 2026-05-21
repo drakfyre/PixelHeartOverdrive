@@ -150,6 +150,15 @@ songSlider.addEventListener("change", function() {
 
 function moveSlider() {
     songSlider.value = audio.currentTime;
+    if(audio.currentTime >= audio.duration)
+    {
+        if (currentSongIndex == songs.length - 1)
+        {
+            return;
+        }
+        currentSongIndex++;
+        updateSong();
+    }
 };
 
 setInterval(moveSlider, 1000);
