@@ -137,13 +137,11 @@ audio.addEventListener('error', (e) => {
 playpauseButton.addEventListener("click", function() {
     if (!audio.paused)
     {
-        audio.pause();
-        playpauseButton.classList.replace('fa-circle-pause', 'fa-circle-play');
+        pauseAudio();
     }
     else
     {
-        audio.play();
-        playpauseButton.classList.replace('fa-circle-play', 'fa-circle-pause');
+        playAudio();
     }
 });
 
@@ -170,13 +168,11 @@ function updateSong()
 
         navigator.mediaSession.setActionHandler('play', () =>
         {
-            audio.play();
-            playpauseButton.classList.replace('fa-circle-play', 'fa-circle-pause');
+            playAudio();
         });
         navigator.mediaSession.setActionHandler('pause', () =>
         {
-            audio.pause();
-            playpauseButton.classList.replace('fa-circle-pause', 'fa-circle-play');
+            pauseAudio();
         });
     }
 
@@ -193,7 +189,7 @@ function updateSong()
 
     if(playpauseButton.classList.contains('fa-circle-pause'))
     {
-        audio.play();
+        playAudio();
     }
 }
 
@@ -219,6 +215,25 @@ function playPreviousTrack()
     updateSong();
 }
 
+async function playAudio() {
+  try {
+    playpauseButton.classList.replace('fa-circle-play', 'fa-circle-pause');
+    await audio.play();
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.playbackState = "playing";
+    }
+  } catch (err) {
+    console.error("Playback prevented:", err);
+  }
+}
+
+function pauseAudio() {
+    playpauseButton.classList.replace('fa-circle-pause', 'fa-circle-play');
+  audio.pause();
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.playbackState = "paused";
+  }
+}
 
 function moveSlider() {
     songSlider.value = audio.currentTime;
