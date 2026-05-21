@@ -39,7 +39,7 @@ body {
     appearance: none;
     width: 300px;
     height: 5px;
-    background: repeating-linear-gradient(45deg, red, rgb(121, 43, 209) 12px, rgb(235, 38, 202) 12px, white 24px);
+    background: repeating-linear-gradient(45deg, rgb(255, 0, 255), rgb(121, 43, 209) 12px, rgb(235, 38, 202) 12px, rgb(25, 15, 160) 24px);
     border: 1px solid red;
     border-radius: 10px;
     margin-top: 20px;
