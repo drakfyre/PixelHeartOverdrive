@@ -149,6 +149,7 @@ function updateSong()
         songSlider.max = audio.duration;
     };
 
+    audio.load(); 
     audio.play
 }
 
