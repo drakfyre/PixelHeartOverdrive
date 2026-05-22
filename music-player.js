@@ -121,6 +121,7 @@ const songs = [
 
 let currentSongIndex = 0;
 let isPlaying = false;
+let showQR = false;
 
 // --------------------------------------------------
 // OPTIONAL DEFAULT COVER
@@ -342,6 +343,19 @@ function updateMediaSession(song) {
     });
 }
 
+function toggleQR()
+{
+    showQR = !showQR;
+    if(showQR)
+    {
+        songImage.src = "PixelHeartQR.png"
+    }
+    else
+    {
+        songImage.src = "albumart.jpeg"
+    }
+}
+
 // --------------------------------------------------
 // BUTTON EVENTS
 // --------------------------------------------------
@@ -349,6 +363,8 @@ function updateMediaSession(song) {
 playpauseButton.addEventListener("click", togglePlayPause);
 nextSongButton.addEventListener("click", nextSong);
 prevSongButton.addEventListener("click", prevSong);
+
+songImage.addEventListener("click", toggleQR)
 
 // --------------------------------------------------
 // INITIALIZE
