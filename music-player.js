@@ -239,7 +239,7 @@ function togglePlayPause() {
 // --------------------------------------------------
 
 function nextSong() {
-
+    updatePlayerUI();
     seekToTrack(currentSongIndex + 1);
 }
 
@@ -248,7 +248,7 @@ function nextSong() {
 // --------------------------------------------------
 
 function prevSong() {
-
+    updatePlayerUI();
     seekToTrack(currentSongIndex - 1);
 }
 
