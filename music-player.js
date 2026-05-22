@@ -7,6 +7,7 @@ const songSlider = document.getElementById("slider-song");
 const playpauseButton = document.getElementById("playpause-song");
 const prevSongButton = document.getElementById("prev-song");
 const nextSongButton = document.getElementById("next-song");
+const songTimeDisplay = document.getElementById("song-time");
 
 const audioPlayer = document.getElementById("audio-player");
 
@@ -55,7 +56,7 @@ const songs = [
     {
         name: "The Rival returns",
         artist: "HappyJazzyDragon",
-        start: 1441
+        start: 1455
     },
     {
         name: "Metal Arctic Zone",
@@ -264,6 +265,10 @@ audioPlayer.addEventListener("timeupdate", () => {
         songSlider.value =
             (currentTime / audioPlayer.duration) * 100;
     }
+
+    // Display precise time
+    songTimeDisplay.textContent =
+        currentTime.toFixed(3);
 
     // Detect track transitions
 
