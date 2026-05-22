@@ -8,7 +8,10 @@
         <link rel="stylesheet" href="music-player.css">
     </head>
     <body>
-        <audio id="audio-player"></audio>
+        <audio id="audio-player" preload="auto">
+            <source src="FullAlbum.ogg" type="audio/ogg">
+            <source src="FullAlbum.m4a" type="audio/mp4">
+        </audio>
         <div id="music-player">
             <img id="song-image" src="./albumart.jpeg"/>
             <div id="song-name">Song</div>
