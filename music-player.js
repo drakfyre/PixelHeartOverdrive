@@ -30,12 +30,12 @@ const songs = [
     {
         name: "Breaking out onto the Scene",
         artist: "HappyJazzyDragon",
-        start: 325
+        start: 326
     },
     {
         name: "Hard Goin' Platformin'",
         artist: "HappyJazzyDragon",
-        start: 559
+        start: 570
     },
     {
         name: "We may yet make it After All",
@@ -45,12 +45,12 @@ const songs = [
     {
         name: "Aliased Horizon",
         artist: "HappyJazzyDragon",
-        start: 980
+        start: 982
     },
     {
         name: "Saturated Swing",
         artist: "HappyJazzyDragon",
-        start: 1249
+        start: 1265
     },
     {
         name: "The Rival returns",
