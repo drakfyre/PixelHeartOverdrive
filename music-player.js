@@ -8,100 +8,110 @@ const playpauseButton = document.getElementById("playpause-song");
 const prevSongButton = document.getElementById("prev-song");
 const nextSongButton = document.getElementById("next-song");
 
+const audioPlayer = document.getElementById("audio-player");
+
 // --------------------------------------------------
-// SONG LIST
+// SINGLE ALBUM FILE
+// --------------------------------------------------
+
+audioPlayer.src = "MP3/FullAlbum.mp3";
+
+// --------------------------------------------------
+// TRACK METADATA
+// start = seconds into FullAlbum.mp3
 // --------------------------------------------------
 
 const songs = [
     {
         name: "Example of the Hero",
         artist: "HappyJazzyDragon",
-        audio: "MP3/Example of the Hero.mp3"
+        start: 0
     },
     {
         name: "Breaking out onto the Scene",
         artist: "HappyJazzyDragon",
-        audio: "MP3/Breaking out onto the Scene.mp3"
+        start: 325
     },
     {
         name: "Hard Goin' Platformin'",
         artist: "HappyJazzyDragon",
-        audio: "MP3/Hard Goin' Platformin'.mp3"
+        start: 559
     },
     {
         name: "We may yet make it After All",
         artist: "HappyJazzyDragon",
-        audio: "MP3/We may yet make it After All.mp3"
+        start: 792
     },
     {
         name: "Aliased Horizon",
         artist: "HappyJazzyDragon",
-        audio: "MP3/Aliased Horizon.mp3"
+        start: 980
     },
     {
         name: "Saturated Swing",
         artist: "HappyJazzyDragon",
-        audio: "MP3/Saturated Swing.mp3"
+        start: 1249
     },
     {
         name: "The Rival returns",
         artist: "HappyJazzyDragon",
-        audio: "MP3/The Rival returns.mp3"
+        start: 1441
     },
     {
         name: "Metal Arctic Zone",
         artist: "HappyJazzyDragon",
-        audio: "MP3/Metal Arctic Zone.mp3"
+        start: 1670
     },
     {
         name: "Drive by Wire",
         artist: "HappyJazzyDragon",
-        audio: "MP3/Drive by Wire.mp3"
+        start: 1876
     },
     {
         name: "Breakneck Approach",
         artist: "HappyJazzyDragon",
-        audio: "MP3/Breakneck Approach.mp3"
+        start: 2127
     },
     {
         name: "Prismatic Funk",
         artist: "HappyJazzyDragon",
-        audio: "MP3/Prismatic Funk.mp3"
+        start: 2304
     },
     {
         name: "Happiness is a Superpower",
         artist: "HappyJazzyDragon",
-        audio: "MP3/Happiness is a Superpower.mp3"
+        start: 2558
     },
     {
         name: "Nostalgenosis",
         artist: "HappyJazzyDragon",
-        audio: "MP3/Nostalgenosis.mp3"
+        start: 2755
     },
     {
         name: "Pixel Heart Overdrive",
-        artist: "MP3/Pixel Heart Overdrive.mp3"
+        artist: "HappyJazzyDragon",
+        start: 2958
     },
     {
         name: "The Rescued becomes the Rescuer",
         artist: "HappyJazzyDragon",
-        audio: "MP3/The Rescued becomes the Rescuer.mp3"
+        start: 3227
     },
     {
         name: "Big Bad ain't so Bad",
         artist: "HappyJazzyDragon",
-        audio: "MP3/Big Bad ain't so Bad.mp3"
+        start: 3457
     },
     {
         name: "Anthemic Epilogue",
         artist: "HappyJazzyDragon",
-        audio: "MP3/Anthemic Epilogue.mp3"
+        start: 3661
     },
     {
         name: "(our) Players of the Evening",
         artist: "HappyJazzyDragon",
-        audio: "MP3/(our) Players of the Evening.mp3"
-    },
+        start: 3862
+    }
 ];
 
 // --------------------------------------------------
@@ -112,69 +122,22 @@ let currentSongIndex = 0;
 let isPlaying = false;
 
 // --------------------------------------------------
-// DUAL AUDIO PLAYERS
-// --------------------------------------------------
-
-const playerA = new Audio();
-const playerB = new Audio();
-
-let currentPlayer = playerA;
-let preloadPlayer = playerB;
-
-// --------------------------------------------------
-// MOBILE RELIABILITY SETTINGS
-// --------------------------------------------------
-
-[playerA, playerB].forEach(player => {
-    player.preload = "auto";
-    player.crossOrigin = "anonymous";
-
-    player.setAttribute("playsinline", "true");
-    player.setAttribute("webkit-playsinline", "true");
-});
-
-// --------------------------------------------------
-// DEFAULT COVER
+// OPTIONAL DEFAULT COVER
 // --------------------------------------------------
 
 const defaultCover = "albumart.jpeg";
 
 // --------------------------------------------------
-// LOAD CURRENT SONG
+// LOAD TRACK METADATA
+// (does NOT change audio source)
 // --------------------------------------------------
 
-function loadSong(index) {
+function loadTrack(index) {
+
+    currentSongIndex = index;
+
     const song = songs[index];
 
-    currentPlayer.src = song.audio;
-    currentPlayer.load();
-
-    updateSongUI(song);
-    updateMediaSession(song);
-
-    preloadNextSong();
-}
-
-// --------------------------------------------------
-// PRELOAD NEXT SONG
-// --------------------------------------------------
-
-function preloadNextSong() {
-    let nextIndex = currentSongIndex + 1;
-
-    if (nextIndex >= songs.length) {
-        nextIndex = 0;
-    }
-
-    preloadPlayer.src = songs[nextIndex].audio;
-    preloadPlayer.load();
-}
-
-// --------------------------------------------------
-// UPDATE UI
-// --------------------------------------------------
-
-function updateSongUI(song) {
     songName.textContent = song.name;
     songArtist.textContent = song.artist;
 
@@ -183,15 +146,47 @@ function updateSongUI(song) {
     } else {
         songImage.src = defaultCover;
     }
+
+    updateMediaSession(song);
 }
 
 // --------------------------------------------------
-// PLAY SONG
+// SEEK TO TRACK
+// --------------------------------------------------
+
+async function seekToTrack(index) {
+
+    if (index < 0) {
+        index = songs.length - 1;
+    }
+
+    if (index >= songs.length) {
+        index = 0;
+    }
+
+    loadTrack(index);
+
+    audioPlayer.currentTime = songs[index].start;
+
+    if (isPlaying) {
+
+        try {
+            await audioPlayer.play();
+        } catch (err) {
+            console.warn("Playback failed:", err);
+        }
+    }
+}
+
+// --------------------------------------------------
+// PLAY
 // --------------------------------------------------
 
 async function playSong() {
+
     try {
-        await currentPlayer.play();
+
+        await audioPlayer.play();
 
         isPlaying = true;
 
@@ -202,16 +197,18 @@ async function playSong() {
         }
 
     } catch (err) {
+
         console.warn("Playback failed:", err);
     }
 }
 
 // --------------------------------------------------
-// PAUSE SONG
+// PAUSE
 // --------------------------------------------------
 
 function pauseSong() {
-    currentPlayer.pause();
+
+    audioPlayer.pause();
 
     isPlaying = false;
 
@@ -227,6 +224,7 @@ function pauseSong() {
 // --------------------------------------------------
 
 function togglePlayPause() {
+
     if (isPlaying) {
         pauseSong();
     } else {
@@ -235,112 +233,53 @@ function togglePlayPause() {
 }
 
 // --------------------------------------------------
-// SWAP PLAYERS
+// NEXT TRACK
 // --------------------------------------------------
 
-function swapPlayers() {
-    const temp = currentPlayer;
+function nextSong() {
 
-    currentPlayer = preloadPlayer;
-    preloadPlayer = temp;
+    seekToTrack(currentSongIndex + 1);
 }
 
 // --------------------------------------------------
-// NEXT SONG
+// PREVIOUS TRACK
 // --------------------------------------------------
 
-async function nextSong() {
+function prevSong() {
 
-    currentPlayer.pause();
-
-    currentSongIndex++;
-
-    if (currentSongIndex >= songs.length) {
-        currentSongIndex = 0;
-    }
-
-    swapPlayers();
-
-    const song = songs[currentSongIndex];
-
-    updateSongUI(song);
-    updateMediaSession(song);
-
-    preloadNextSong();
-
-    if (isPlaying) {
-        try {
-            await currentPlayer.play();
-        } catch (err) {
-            console.warn("Next song failed:", err);
-        }
-    }
+    seekToTrack(currentSongIndex - 1);
 }
 
 // --------------------------------------------------
-// PREVIOUS SONG
+// AUTO TRACK DETECTION
 // --------------------------------------------------
 
-async function prevSong() {
+audioPlayer.addEventListener("timeupdate", () => {
 
-    currentPlayer.pause();
+    const currentTime = audioPlayer.currentTime;
 
-    currentSongIndex--;
-
-    if (currentSongIndex < 0) {
-        currentSongIndex = songs.length - 1;
-    }
-
-    currentPlayer.src = songs[currentSongIndex].audio;
-    currentPlayer.load();
-
-    updateSongUI(songs[currentSongIndex]);
-    updateMediaSession(songs[currentSongIndex]);
-
-    preloadNextSong();
-
-    if (isPlaying) {
-        try {
-            await currentPlayer.play();
-        } catch (err) {
-            console.warn("Previous song failed:", err);
-        }
-    }
-}
-
-// --------------------------------------------------
-// SLIDER UPDATE
-// --------------------------------------------------
-
-setInterval(() => {
-
-    if (currentPlayer.duration) {
+    // Update slider
+    if (audioPlayer.duration) {
 
         songSlider.value =
-            (currentPlayer.currentTime / currentPlayer.duration) * 100;
-
-        // NEAR-END DETECTION
-        // Much more reliable than "ended" on mobile
-
-        const remaining =
-            currentPlayer.duration - currentPlayer.currentTime;
-
-        if (
-            remaining <= 0.35 &&
-            !currentPlayer.__advancing
-        ) {
-
-            currentPlayer.__advancing = true;
-
-            nextSong();
-
-            setTimeout(() => {
-                currentPlayer.__advancing = false;
-            }, 1000);
-        }
+            (currentTime / audioPlayer.duration) * 100;
     }
 
-}, 250);
+    // Detect track transitions
+
+    for (let i = songs.length - 1; i >= 0; i--) {
+
+        if (currentTime >= songs[i].start) {
+
+            if (currentSongIndex !== i) {
+
+                loadTrack(i);
+            }
+
+            break;
+        }
+    }
+});
 
 // --------------------------------------------------
 // SEEK BAR
@@ -348,26 +287,10 @@ setInterval(() => {
 
 songSlider.addEventListener("input", () => {
 
-    if (currentPlayer.duration) {
+    if (audioPlayer.duration) {
 
-        currentPlayer.currentTime =
-            (songSlider.value / 100) * currentPlayer.duration;
-    }
-});
-
-// --------------------------------------------------
-// VISIBILITY RECOVERY
-// --------------------------------------------------
-
-document.addEventListener("visibilitychange", () => {
-
-    if (
-        !document.hidden &&
-        isPlaying &&
-        currentPlayer.paused
-    ) {
-
-        currentPlayer.play().catch(() => {});
+        audioPlayer.currentTime =
+            (songSlider.value / 100) * audioPlayer.duration;
     }
 });
 
@@ -384,7 +307,7 @@ function updateMediaSession(song) {
     navigator.mediaSession.metadata = new MediaMetadata({
         title: song.name,
         artist: song.artist,
-        album: "Pixel Heart Overdrive",
+        album: "HappyJazzyDragon Collection",
         artwork: [
             {
                 src: song.image || defaultCover,
@@ -423,4 +346,4 @@ prevSongButton.addEventListener("click", prevSong);
 // INITIALIZE
 // --------------------------------------------------
 
-loadSong(currentSongIndex);
+loadTrack(0);
