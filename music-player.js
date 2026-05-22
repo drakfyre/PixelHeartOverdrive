@@ -31,87 +31,87 @@ const songs = [
     {
         name: "Breaking out onto the Scene",
         artist: "HappyJazzyDragon",
-        start: 325
+        start: 325.3
     },
     {
         name: "Hard Goin' Platformin'",
         artist: "HappyJazzyDragon",
-        start: 559
+        start: 560.2
     },
     {
         name: "We may yet make it After All",
         artist: "HappyJazzyDragon",
-        start: 792
+        start: 793.9
     },
     {
         name: "Aliased Horizon",
         artist: "HappyJazzyDragon",
-        start: 980
+        start: 977.5
     },
     {
         name: "Saturated Swing",
         artist: "HappyJazzyDragon",
-        start: 1249
+        start: 1246.6
     },
     {
         name: "The Rival returns",
         artist: "HappyJazzyDragon",
-        start: 1441
+        start: 1449.5
     },
     {
         name: "Metal Arctic Zone",
         artist: "HappyJazzyDragon",
-        start: 1670
+        start: 1678
     },
     {
         name: "Drive by Wire",
         artist: "HappyJazzyDragon",
-        start: 1876
+        start: 1883.53
     },
     {
         name: "Breakneck Approach",
         artist: "HappyJazzyDragon",
-        start: 2127
+        start: 2141.4
     },
     {
         name: "Prismatic Funk",
         artist: "HappyJazzyDragon",
-        start: 2304
+        start: 2318.5
     },
     {
         name: "Happiness is a Superpower",
         artist: "HappyJazzyDragon",
-        start: 2558
+        start: 2572
     },
     {
         name: "Nostalgenosis",
         artist: "HappyJazzyDragon",
-        start: 2755
+        start: 2779.5
     },
     {
         name: "Pixel Heart Overdrive",
         artist: "HappyJazzyDragon",
-        start: 2958
+        start: 2993
     },
     {
         name: "The Rescued becomes the Rescuer",
         artist: "HappyJazzyDragon",
-        start: 3227
+        start: 3261.7
     },
     {
         name: "Big Bad ain't so Bad",
         artist: "HappyJazzyDragon",
-        start: 3457
+        start: 3491.7
     },
     {
         name: "Anthemic Epilogue",
         artist: "HappyJazzyDragon",
-        start: 3661
+        start: 3706
     },
     {
         name: "(our) Players of the Evening",
         artist: "HappyJazzyDragon",
-        start: 3862
+        start: 3907.5
     }
 ];
 
