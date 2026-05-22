@@ -15,7 +15,7 @@ const audioPlayer = document.getElementById("audio-player");
 // SINGLE ALBUM FILE
 // --------------------------------------------------
 
-audioPlayer.src = "MP3/FullAlbum.mp3";
+//audioPlayer.src = "MP3/FullAlbum.mp3";
 
 // --------------------------------------------------
 // TRACK METADATA
@@ -46,7 +46,7 @@ const songs = [
     {
         name: "Aliased Horizon",
         artist: "HappyJazzyDragon",
-        start: 987.5
+        start: 979
     },
     {
         name: "Saturated Swing",
