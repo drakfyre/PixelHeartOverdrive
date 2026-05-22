@@ -36,27 +36,27 @@ const songs = [
     {
         name: "Hard Goin' Platformin'",
         artist: "HappyJazzyDragon",
-        start: 565.7
+        start: 565.455
     },
     {
         name: "We may yet make it After All",
         artist: "HappyJazzyDragon",
-        start: 804.4
+        start: 807.3
     },
     {
         name: "Aliased Horizon",
         artist: "HappyJazzyDragon",
-        start: 980.3
+        start: 987.5
     },
     {
         name: "Saturated Swing",
         artist: "HappyJazzyDragon",
-        start: 1259.5
+        start: 1252.7
     },
     {
         name: "The Rival returns",
         artist: "HappyJazzyDragon",
-        start: 1448.6
+        start: 1458.3
     },
     {
         name: "Metal Arctic Zone",
