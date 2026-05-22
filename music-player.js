@@ -61,7 +61,7 @@ const songs = [
     {
         name: "Metal Arctic Zone",
         artist: "HappyJazzyDragon",
-        start: 1679.47
+        start: 1692.4
     },
     {
         name: "Drive by Wire",
@@ -255,23 +255,22 @@ function prevSong() {
 // AUTO TRACK DETECTION
 // --------------------------------------------------
 
-audioPlayer.addEventListener("timeupdate", () => {
+function updatePlayerUI() {
 
     const currentTime = audioPlayer.currentTime;
 
-    // Update slider
+    // Precise time display
+    songTimeDisplay.textContent =
+        currentTime.toFixed(3);
+
+    // Slider update
     if (audioPlayer.duration) {
 
         songSlider.value =
             (currentTime / audioPlayer.duration) * 100;
     }
 
-    // Display precise time
-    songTimeDisplay.textContent =
-        currentTime.toFixed(3);
-
-    // Detect track transitions
-
+    // Track detection
     for (let i = songs.length - 1; i >= 0; i--) {
 
         if (currentTime >= songs[i].start) {
@@ -284,7 +283,11 @@ audioPlayer.addEventListener("timeupdate", () => {
             break;
         }
     }
-});
+
+    requestAnimationFrame(updatePlayerUI);
+}
+
+requestAnimationFrame(updatePlayerUI);
 
 // --------------------------------------------------
 // SEEK BAR
