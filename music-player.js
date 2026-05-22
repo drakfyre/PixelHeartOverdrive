@@ -8,11 +8,6 @@ const playpauseButton = document.getElementById("playpause-song");
 const prevSongButton = document.getElementById("prev-song");
 const nextSongButton = document.getElementById("next-song");
 
-// IMPORTANT:
-// Add this to your HTML:
-// <audio id="audio-player"></audio>
-const audioPlayer = document.getElementById("audio-player");
-
 const songs = [
     {
         name: "Example of the Hero",
@@ -106,240 +101,130 @@ const songs = [
     },
 ];
 
-// --------------------------------------------------
-// PLAYER STATE
-// --------------------------------------------------
-
+const audio = document.createElement("audio");
 let currentSongIndex = 0;
-let isPlaying = false;
 
-// --------------------------------------------------
-// MOBILE PLAYBACK IMPROVEMENTS
-// --------------------------------------------------
+updateSong();
 
-audioPlayer.preload = "auto";
-audioPlayer.crossOrigin = "anonymous";
+prevSongButton.addEventListener("click", function() {
+    playPreviousTrack();
+});
 
-// iOS Safari
-audioPlayer.setAttribute("playsinline", "true");
-audioPlayer.setAttribute("webkit-playsinline", "true");
+nextSongButton.addEventListener("click", function() {
+    playNextTrack();
+});
 
-// --------------------------------------------------
-// OPTIONAL DEFAULT COVER
-// --------------------------------------------------
+audio.addEventListener('ended', () => {
+    playNextTrack(); // Your function to change src and play
+});
 
-const defaultCover = "images/default-cover.png";
+audio.addEventListener('stalled', () => {
+  console.warn('Network connection is stalled. Buffering...');
+  // Optional: show a "Buffering" indicator in your UI
+});
 
-// --------------------------------------------------
-// LOAD SONG
-// --------------------------------------------------
+audio.addEventListener('error', (e) => {
+  console.error('Audio playback error:', audio.error);
+  // Attempt a soft reconnect by reloading the source
+  const currentSource = audio.src;
+  setTimeout(() => {
+    audio.src = currentSource;
+    audio.currentTime = songSlider.value;
+    audio.play().catch(err => console.log('Reconnection failed', err));
+  }, 3000); // Wait 3 seconds before retrying
+});
 
-function loadSong(index) {
-    const song = songs[index];
-
-    audioPlayer.src = song.audio;
-    audioPlayer.load();
-
-    songName.textContent = song.name;
-    songArtist.textContent = song.artist;
-
-    if (song.image) {
-        songImage.src = song.image;
-    } else {
-        songImage.src = defaultCover;
+playpauseButton.addEventListener("click", function() {
+    if (!audio.paused)
+    {
+        audio.pause();
+        playpauseButton.classList.replace('fa-circle-pause', 'fa-circle-play');
     }
-
-    updateMediaSession();
-}
-
-// --------------------------------------------------
-// PLAY SONG
-// --------------------------------------------------
-
-async function playSong() {
-    try {
-        await audioPlayer.play();
-
-        isPlaying = true;
-        playpauseButton.classList.replace("fa-circle-play","fa-circle-pause");
-
-        if ("mediaSession" in navigator) {
-            navigator.mediaSession.playbackState = "playing";
-        }
-    } catch (err) {
-        console.warn("Playback failed:", err);
-    }
-}
-
-// --------------------------------------------------
-// PAUSE SONG
-// --------------------------------------------------
-
-function pauseSong() {
-    audioPlayer.pause();
-
-    isPlaying = false;
-
-    playpauseButton.classList.replace("fa-circle-pause","fa-circle-play");
-
-    if ("mediaSession" in navigator) {
-        navigator.mediaSession.playbackState = "paused";
-    }
-}
-
-// --------------------------------------------------
-// TOGGLE PLAY/PAUSE
-// --------------------------------------------------
-
-function togglePlayPause() {
-    if (isPlaying) {
-        pauseSong();
-    } else {
-        playSong();
-    }
-}
-
-// --------------------------------------------------
-// NEXT SONG
-// --------------------------------------------------
-
-function nextSong() {
-    currentSongIndex++;
-
-    if (currentSongIndex >= songs.length) {
-        currentSongIndex = 0;
-    }
-
-    loadSong(currentSongIndex);
-
-    // Wait until enough audio is buffered
-    audioPlayer.addEventListener(
-        "canplaythrough",
-        () => {
-            playSong();
-        },
-        { once: true }
-    );
-}
-
-// --------------------------------------------------
-// PREVIOUS SONG
-// --------------------------------------------------
-
-function prevSong() {
-    currentSongIndex--;
-
-    if (currentSongIndex < 0) {
-        currentSongIndex = songs.length - 1;
-    }
-
-    loadSong(currentSongIndex);
-
-    audioPlayer.addEventListener(
-        "canplaythrough",
-        () => {
-            playSong();
-        },
-        { once: true }
-    );
-}
-
-// --------------------------------------------------
-// SONG SLIDER UPDATE
-// --------------------------------------------------
-
-audioPlayer.addEventListener("timeupdate", () => {
-    if (audioPlayer.duration) {
-        songSlider.value =
-            (audioPlayer.currentTime / audioPlayer.duration) * 100;
+    else
+    {
+        audio.play();
+        playpauseButton.classList.replace('fa-circle-play', 'fa-circle-pause');
     }
 });
 
-// --------------------------------------------------
-// SEEK BAR
-// --------------------------------------------------
-
-songSlider.addEventListener("input", () => {
-    if (audioPlayer.duration) {
-        audioPlayer.currentTime =
-            (songSlider.value / 100) * audioPlayer.duration;
-    }
-});
-
-// --------------------------------------------------
-// TRACK FINISHED
-// --------------------------------------------------
-
-audioPlayer.addEventListener("ended", handleSongEnded);
-
-function handleSongEnded() {
-    // Small delay helps mobile browsers
-    setTimeout(() => {
-        nextSong();
-    }, 100);
-}
-
-// --------------------------------------------------
-// VISIBILITY RECOVERY
-// --------------------------------------------------
-
-document.addEventListener("visibilitychange", () => {
-    if (!document.hidden && isPlaying && audioPlayer.paused) {
-        audioPlayer.play().catch(() => {});
-    }
-});
-
-// --------------------------------------------------
-// BUTTON EVENTS
-// --------------------------------------------------
-
-playpauseButton.addEventListener("click", togglePlayPause);
-nextSongButton.addEventListener("click", nextSong);
-prevSongButton.addEventListener("click", prevSong);
-
-// --------------------------------------------------
-// MEDIA SESSION
-// --------------------------------------------------
-
-function updateMediaSession() {
-    if (!("mediaSession" in navigator)) {
-        return;
-    }
-
+function updateSong()
+{
     const song = songs[currentSongIndex];
 
-    navigator.mediaSession.metadata = new MediaMetadata({
-        title: song.name,
-        artist: song.artist,
-        album: "HappyJazzyDragon Collection",
-        artwork: [
-            {
-                src: song.image || defaultCover,
-                sizes: "512x512",
-                type: "image/png"
-            }
-        ]
-    });
+    if('mediaSession' in navigator)
+    {
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: song.name,
+            artist: song.artist,
+            album: 'Pixel Heart Overdrive',
+            artwork: [{ src: 'albumart.jpeg', sizes: '512x512', type: 'image/jpeg' }]
+        });
 
-    navigator.mediaSession.setActionHandler("play", () => {
-        playSong();
-    });
+        navigator.mediaSession.setActionHandler('nexttrack', () => {
+            playNextTrack();
+        });
 
-    navigator.mediaSession.setActionHandler("pause", () => {
-        pauseSong();
-    });
+        navigator.mediaSession.setActionHandler('previoustrack', () => {
+            playPreviousTrack();
+        });
 
-    navigator.mediaSession.setActionHandler("previoustrack", () => {
-        prevSong();
-    });
+        navigator.mediaSession.setActionHandler('play', () =>
+        {
+            audio.play();
+            playpauseButton.classList.replace('fa-circle-play', 'fa-circle-pause');
+        });
+        navigator.mediaSession.setActionHandler('pause', () =>
+        {
+            audio.pause();
+            playpauseButton.classList.replace('fa-circle-pause', 'fa-circle-play');
+        });
+    }
 
-    navigator.mediaSession.setActionHandler("nexttrack", () => {
-        nextSong();
-    });
+    //songImage.src = song.image;
+    songName.innerText = song.name;
+    songArtist.innerText = song.artist;
+
+    audio.src = song.audio;
+    audio.onloadedmetadata = function()
+    {
+        songSlider.value = 0;
+        songSlider.max = audio.duration;
+    };
+
+    if(playpauseButton.classList.contains('fa-circle-pause'))
+    {
+        audio.play();
+    }
 }
 
-// --------------------------------------------------
-// INITIALIZE PLAYER
-// --------------------------------------------------
+songSlider.addEventListener("change", function() {
+    audio.currentTime = songSlider.value;
+})
 
-loadSong(currentSongIndex);
+function playNextTrack()
+{
+    if (currentSongIndex == songs.length - 1) {
+        return;
+    }
+    currentSongIndex++;
+    updateSong();
+}
+
+function playPreviousTrack()
+{
+    if (currentSongIndex == 0) {
+        return;
+    }
+    currentSongIndex--;
+    updateSong();
+}
+
+
+function moveSlider() {
+    songSlider.value = audio.currentTime;
+};
+
+setInterval(moveSlider, 1000);
+
+
+
