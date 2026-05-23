@@ -9,6 +9,10 @@ a {
   visited: palevioletred;
 }
 
+a:visited {
+  color: palevioletred;
+}
+
 #music-player {
     display: flex;
     flex-direction: column;
