@@ -1,6 +1,8 @@
 const songAlbum = document.getElementById("song-album");
 const songImage = document.getElementById("song-image");
 const songName = document.getElementById("song-name");
+const songMP3 = document.getElementById("MP3-Download");
+const songWAV = document.getElementById("WAV-Download")
 
 const songSlider = document.getElementById("slider-song");
 
@@ -25,74 +27,110 @@ const audioPlayer = document.getElementById("audio-player");
 const songs = [
     {
         name: "Example of the Hero",
+        mp3link: "MP3/01 - Example of the Hero.mp3",
+        wavlink: "WAV/01 - Example of the Hero.wav",
         start: 0
     },
     {
         name: "Breaking out onto the Scene",
+        mp3link: "MP3/02 - Breaking out onto the Scene.mp3",
+        wavlink: "WAV/02 - Breaking out onto the Scene.wav",
         start: 325.3
     },
     {
         name: "Hard Goin' Platformin'",
+        mp3link: "MP3/03 - Hard Goin' Platformin'.mp3",
+        wavlink: "WAV/03 - Hard Goin' Platformin'.wav",
         start: 560.2
     },
     {
         name: "We may yet make it After All",
+        mp3link: "MP3/04 - We may yet make it After All.mp3",
+        wavlink: "WAV/04 - We may yet make it After All.wav",
         start: 793.9
     },
     {
         name: "Aliased Horizon",
+        mp3link: "MP3/02 - Breaking out onto the Scene.mp3",
+        wavlink: "WAV/02 - Breaking out onto the Scene.wav",
         start: 977.5
     },
     {
         name: "Saturated Swing",
+        mp3link: "MP3/06 - Saturated Swing.mp3",
+        wavlink: "WAV/06 - Saturated Swing.wav",
         start: 1246.6
     },
     {
         name: "The Rival returns",
+        mp3link: "MP3/07 - The Rival returns.mp3",
+        wavlink: "WAV/07 - The Rival returns.wav",
         start: 1449.5
     },
     {
         name: "Metal Arctic Zone",
+        mp3link: "MP3/08 - Metal Arctic Zone.mp3",
+        wavlink: "WAV/08 - Metal Arctic Zone.wav",
         start: 1678
     },
     {
         name: "Drive by Wire",
+        mp3link: "MP3/09 - Drive by Wire.mp3",
+        wavlink: "WAV/09 - Drive by Wire.wav",
         start: 1883.53
     },
     {
         name: "Breakneck Approach",
+        mp3link: "MP3/10 - Breakneck Approach.mp3",
+        wavlink: "WAV/10 - Breakneck Approach.wav",
         start: 2141.4
     },
     {
         name: "Prismatic Funk",
+        mp3link: "MP3/11 - Prismatic Funk.mp3",
+        wavlink: "WAV/11 - Prismatic Funk.wav",
         start: 2318.5
     },
     {
         name: "Happiness is a Superpower",
+        mp3link: "MP3/12 - Happiness is a Superpower.mp3",
+        wavlink: "WAV/12 - Happiness is a Superpower.wav",
         start: 2572
     },
     {
         name: "Nostalgenosis",
+        mp3link: "MP3/13 - Nostalgenosis.mp3",
+        wavlink: "WAV/13 - Nostalgenosis.wav",
         start: 2779.5
     },
     {
         name: "Pixel Heart Overdrive",
+        mp3link: "MP3/14 - Pixel Heart Overdrive.mp3",
+        wavlink: "WAV/14 - Pixel Heart Overdrive.wav",
         start: 2993
     },
     {
         name: "The Rescued becomes the Rescuer",
+        mp3link: "MP3/15 - The Rescued becomes the Rescuer.mp3",
+        wavlink: "WAV/15 - The Rescued becomes the Rescuer.wav",
         start: 3261.7
     },
     {
         name: "Big Bad ain't so Bad",
+        mp3link: "MP3/16 - Big Bad ain't so Bad.mp3",
+        wavlink: "WAV/16 - Big Bad ain't so Bad.wav",
         start: 3491.7
     },
     {
         name: "Anthemic Epilogue",
+        mp3link: "MP3/17 - Anthemic Epilogue.mp3",
+        wavlink: "WAV/17 - Anthemic Epilogue.wav",
         start: 3706
     },
     {
         name: "(our) Players of the Evening",
+        mp3link: "MP3/18 - (our) Players of the Evening.mp3",
+        wavlink: "WAV/18 - (our) Players of the Evening.wav",
         start: 3907.5
     }
 ];
@@ -124,6 +162,10 @@ function loadTrack(index) {
 
     songAlbum.textContent = "Pixel Heart Overdrive";
     songName.textContent = song.name;
+    songMP3.textContent = "Download " + song.mp3link;
+    songMP3.href = song.mp3link;
+    songWAV.textContent = "Download " + song.mp3link;
+    songWAV.href = song.wavlink;
 
     if (song.image) {
         songImage.src = song.image;
