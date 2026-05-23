@@ -5,7 +5,8 @@ body {
 }
 
 a {
-  color: palevioletred; /* Changes all links to red */
+  color: magenta;;
+  visited: palevioletred;
 }
 
 #music-player {
