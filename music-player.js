@@ -164,7 +164,7 @@ function loadTrack(index) {
     songName.textContent = song.name;
     songMP3.textContent = "Download " + song.mp3link;
     songMP3.href = song.mp3link;
-    songWAV.textContent = "Download " + song.wavlink;
+    songWAV.textContent = "D4ownload " + song.wavlink;
     songWAV.href = song.wavlink;
 
     if (song.image) {
@@ -389,6 +389,22 @@ nextSongButton.addEventListener("click", nextSong);
 prevSongButton.addEventListener("click", prevSong);
 
 songImage.addEventListener("click", toggleQR)
+
+document.addEventListener('keydown', (event) =>
+{
+    if(event.code === 'Space')
+    {
+        togglePlayPause();
+    }
+    if(event.code === 'ArrowLeft')
+    {
+        audioPlayer.currentTime -= 10;
+    }
+    if(event.code === 'ArrowRight')
+    {
+        audioPlayer.currentTime += 10;
+    }
+});
 
 // --------------------------------------------------
 // INITIALIZE
