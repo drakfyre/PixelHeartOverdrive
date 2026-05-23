@@ -4,6 +4,10 @@ body {
     color: palevioletred
 }
 
+a {
+  color: palevioletred; /* Changes all links to red */
+}
+
 #music-player {
     display: flex;
     flex-direction: column;

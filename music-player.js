@@ -164,7 +164,7 @@ function loadTrack(index) {
     songName.textContent = song.name;
     songMP3.textContent = "Download " + song.mp3link;
     songMP3.href = song.mp3link;
-    songWAV.textContent = "Download " + song.mp3link;
+    songWAV.textContent = "Download " + song.wavlink;
     songWAV.href = song.wavlink;
 
     if (song.image) {
