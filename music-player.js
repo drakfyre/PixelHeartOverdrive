@@ -410,4 +410,20 @@ document.addEventListener('keydown', (event) =>
 // INITIALIZE
 // --------------------------------------------------
 
-loadTrack(0);
+const searchParams = new URLSearchParams(window.location.search);
+
+// Get a specific parameter value
+const track = searchParams.get('track'); // returns "shoes"
+
+// Check if a parameter exists
+//const hasSize = searchParams.has('size'); // returns true
+
+// Get all values for a duplicate parameter name
+//const sizes = searchParams.getAll('size'); // returns ["9", "10"]
+
+// 4. Loop through all parameters
+//searchParams.forEach((value, key) => {
+  //console.log(`${key}: ${value}`);
+//});
+
+loadTrack(track);
