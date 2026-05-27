@@ -413,7 +413,8 @@ document.addEventListener('keydown', (event) =>
 const searchParams = new URLSearchParams(window.location.search);
 
 // Get a specific parameter value
-const track = searchParams.get('track'); // returns "shoes"
+const track = parseInt(searchParams.get('track'), 10);
+
 
 // Check if a parameter exists
 //const hasSize = searchParams.has('size'); // returns true
