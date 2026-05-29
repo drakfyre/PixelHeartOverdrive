@@ -24,7 +24,8 @@ const audioPlayer = document.getElementById("audio-player");
 // start = seconds into FullAlbum.mp3
 // --------------------------------------------------
 
-const songs = [
+const songs =
+[
     {
         name: "Example of the Hero",
         mp3link: "MP3/01 - Example of the Hero.mp3",
@@ -154,10 +155,9 @@ const defaultCover = "albumart.jpeg";
 // (does NOT change audio source)
 // --------------------------------------------------
 
-function loadTrack(index) {
-
+function loadTrack(index)
+{
     currentSongIndex = index;
-
     const song = songs[index];
 
     songAlbum.textContent = "Pixel Heart Overdrive";
@@ -167,9 +167,12 @@ function loadTrack(index) {
     songWAV.textContent = "D4ownload " + song.wavlink;
     songWAV.href = song.wavlink;
 
-    if (song.image) {
+    if (song.image)
+    {
         songImage.src = song.image;
-    } else {
+    }
+    else
+    {
         songImage.src = defaultCover;
     }
 
@@ -180,25 +183,29 @@ function loadTrack(index) {
 // SEEK TO TRACK
 // --------------------------------------------------
 
-async function seekToTrack(index) {
-
-    if (index < 0) {
+async function seekToTrack(index)
+{
+    if (index < 0)
+    {
         index = songs.length - 1;
     }
 
-    if (index >= songs.length) {
+    if (index >= songs.length)
+    {
         index = 0;
     }
 
     loadTrack(index);
-
     audioPlayer.currentTime = songs[index].start;
 
-    if (isPlaying) {
-
-        try {
+    if (isPlaying)
+    {
+        try
+        {
             await audioPlayer.play();
-        } catch (err) {
+        }
+        catch (err)
+        {
             console.warn("Playback failed:", err);
         }
     }
@@ -208,21 +215,21 @@ async function seekToTrack(index) {
 // PLAY
 // --------------------------------------------------
 
-async function playSong() {
-
-    try {
-
+async function playSong()
+{
+    try
+    {
         await audioPlayer.play();
-
         isPlaying = true;
-
         playpauseButton.classList.replace("fa-circle-play","fa-circle-pause");
 
-        if ("mediaSession" in navigator) {
+        if ("mediaSession" in navigator)
+        {
             navigator.mediaSession.playbackState = "playing";
         }
-
-    } catch (err) {
+    }
+    catch (err)
+    {
 
         console.warn("Playback failed:", err);
     }
@@ -232,15 +239,14 @@ async function playSong() {
 // PAUSE
 // --------------------------------------------------
 
-function pauseSong() {
-
+function pauseSong()
+{
     audioPlayer.pause();
-
     isPlaying = false;
-
     playpauseButton.classList.replace("fa-circle-pause","fa-circle-play");
 
-    if ("mediaSession" in navigator) {
+    if ("mediaSession" in navigator)
+    {
         navigator.mediaSession.playbackState = "paused";
     }
 }
@@ -249,11 +255,14 @@ function pauseSong() {
 // TOGGLE PLAY/PAUSE
 // --------------------------------------------------
 
-function togglePlayPause() {
-
-    if (isPlaying) {
+function togglePlayPause()
+{
+    if (isPlaying)
+    {
         pauseSong();
-    } else {
+    }
+    else 
+    {
         playSong();
     }
 }
@@ -262,7 +271,8 @@ function togglePlayPause() {
 // NEXT TRACK
 // --------------------------------------------------
 
-function nextSong() {
+function nextSong()
+{
     updatePlayerUI();
     seekToTrack(currentSongIndex + 1);
 }
@@ -271,7 +281,8 @@ function nextSong() {
 // PREVIOUS TRACK
 // --------------------------------------------------
 
-function prevSong() {
+function prevSong()
+{
     updatePlayerUI();
     seekToTrack(currentSongIndex - 1);
 }
@@ -280,7 +291,8 @@ function prevSong() {
 // AUTO TRACK DETECTION
 // --------------------------------------------------
 
-function updatePlayerUI() {
+function updatePlayerUI()
+{
 
     const currentTime = audioPlayer.currentTime;
 
@@ -289,23 +301,21 @@ function updatePlayerUI() {
         currentTime.toFixed(3);
 
     // Slider update
-    if (audioPlayer.duration) {
-
-        songSlider.value =
-            (currentTime / audioPlayer.duration) * 100;
+    if (audioPlayer.duration)
+    {
+        songSlider.value = (currentTime / audioPlayer.duration) * 100;
     }
 
     // Track detection
-    for (let i = songs.length - 1; i >= 0; i--) {
-
-        if (currentTime >= songs[i].start) {
-
-            if (currentSongIndex !== i) {
-
+    for (let i = songs.length - 1; i >= 0; i--)
+    {
+        if (currentTime >= songs[i].start)
+        {
+            if (currentSongIndex !== i)
+            {
                 loadTrack(i);
             }
-
-            break;
+            break; // We don't need to check the later songs
         }
     }
 
@@ -318,12 +328,11 @@ requestAnimationFrame(updatePlayerUI);
 // SEEK BAR
 // --------------------------------------------------
 
-songSlider.addEventListener("input", () => {
-
-    if (audioPlayer.duration) {
-
-        audioPlayer.currentTime =
-            (songSlider.value / 100) * audioPlayer.duration;
+songSlider.addEventListener("input", () =>
+{
+    if (audioPlayer.duration)
+    {
+        audioPlayer.currentTime = (songSlider.value / 100) * audioPlayer.duration;
     }
 });
 
@@ -331,17 +340,20 @@ songSlider.addEventListener("input", () => {
 // MEDIA SESSION
 // --------------------------------------------------
 
-function updateMediaSession(song) {
-
-    if (!("mediaSession" in navigator)) {
+function updateMediaSession(song)
+{
+    if (!("mediaSession" in navigator))
+    {
         return;
     }
 
-    navigator.mediaSession.metadata = new MediaMetadata({
+    navigator.mediaSession.metadata = new MediaMetadata(
+    {
         title: song.name,
         artist: song.artist,
         album: "Pixel Heart Overdrive",
-        artwork: [
+        artwork:
+        [
             {
                 src: song.image || defaultCover,
                 sizes: "512x512",
@@ -350,19 +362,23 @@ function updateMediaSession(song) {
         ]
     });
 
-    navigator.mediaSession.setActionHandler("play", () => {
+    navigator.mediaSession.setActionHandler("play", () =>
+    {
         playSong();
     });
 
-    navigator.mediaSession.setActionHandler("pause", () => {
+    navigator.mediaSession.setActionHandler("pause", () =>
+    {
         pauseSong();
     });
 
-    navigator.mediaSession.setActionHandler("nexttrack", () => {
+    navigator.mediaSession.setActionHandler("nexttrack", () =>
+    {
         nextSong();
     });
 
-    navigator.mediaSession.setActionHandler("previoustrack", () => {
+    navigator.mediaSession.setActionHandler("previoustrack", () =>
+    {
         prevSong();
     });
 }
