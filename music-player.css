@@ -6,7 +6,6 @@ body {
 
 a {
   color: magenta;
-  visited: palevioletred;
 }
 
 a:visited {
