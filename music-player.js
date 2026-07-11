@@ -78,13 +78,13 @@ const songs =
         name: "Drive by Wire",
         mp3link: "MP3/09 - Drive by Wire.mp3",
         wavlink: "WAV/09 - Drive by Wire.wav",
-        start: 1883.53
+        start: 1883.6
     },
     {
         name: "Breakneck Approach",
         mp3link: "MP3/10 - Breakneck Approach.mp3",
         wavlink: "WAV/10 - Breakneck Approach.wav",
-        start: 2141.642
+        start: 2141.6
     },
     {
         name: "Prismatic Funk",
