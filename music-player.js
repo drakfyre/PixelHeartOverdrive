@@ -196,7 +196,7 @@ async function seekToTrack(index)
     }
 
     loadTrack(index);
-    audioPlayer.currentTime = songs[index].start;
+    audioPlayer.currentTime = songs[index].start + Number.EPSILON;
 
     if (isPlaying)
     {
@@ -315,7 +315,7 @@ function updatePlayerUI()
             {
                 loadTrack(i);
             }
-            break; // We don't need to check the later songs
+            break; // We don't need to check the earlier songs
         }
     }
 
